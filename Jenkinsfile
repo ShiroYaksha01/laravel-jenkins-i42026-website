@@ -16,7 +16,12 @@ pipeline {
             steps {
                 sh '''
                     composer install --no-interaction --prefer-dist
+
+                    # create .env if not exists
+                    cp .env.example .env || true
+
                     php artisan key:generate --force
+
                     npm install
                     npm run build
                 '''
