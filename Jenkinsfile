@@ -50,9 +50,9 @@ pipeline {
 
     post {
         failure {
-            mail to: 'chansethatek@gmail.com',
-                 subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: "Build failed!\nURL: ${env.BUILD_URL}"
+            // mail to: 'chansethatek@gmail.com',
+            //      subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            //      body: "Build failed!\nURL: ${env.BUILD_URL}"
 
             withCredentials([
                 string(credentialsId: 'telegram-token',   variable: 'TG_TOKEN'),
