@@ -1,0 +1,58 @@
+- hosts: all
+  become: yes
+
+  vars:
+    deploy_path: "{{ deploy_path }}"
+
+  tasks:
+    - name: Create project directory
+      file:
+        path: "{{ deploy_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy project files
+      copy:
+        src: .
+        dest: "{{ deploy_path }}"
+        owner: www-data
+        group: www-data
+
+    - name: Install Composer dependencies
+      shell: |
+        cd {{ deploy_path }}
+        composer install --no-interaction --prefer-dist
+
+    - name: Install Node dependencies
+      shell: |
+        cd {{ deploy_path }}
+        npm install
+
+    - name: Build frontend
+      shell: |
+        cd {{ deploy_path }}
+        npm run build
+
+    - name: Setup Laravel environment
+      shell: |
+        cd {{ deploy_path }}
+        cp .env.example .env || true
+        php artisan key:generate --force
+
+    - name: Set permissions
+      file:
+        path: "{{ deploy_path }}"
+        recurse: yes
+        mode: '0755'
+
+    - name: Fix storage permissions
+      file:
+        path: "{{ deploy_path }}/storage"
+        recurse: yes
+        mode: '0777'
+
+    - name: Fix cache permissions
+      file:
+        path: "{{ deploy_path }}/bootstrap/cache"
+        recurse: yes
+        mode: '0777'
