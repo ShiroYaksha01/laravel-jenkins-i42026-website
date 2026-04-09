@@ -73,16 +73,16 @@ pipeline {
         }
         success {
             echo "Deployed to http://${DEPLOY_HOST}/tek_chansetha"
-            
+
             withCredentials([
                 string(credentialsId: 'telegram-token',   variable: 'TG_TOKEN'),
                 string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT')
-            ])sh """
+            ]){sh """
                     curl -s -X POST \
                       "https://api.telegram.org/bot\${TG_TOKEN}/sendMessage" \
                       -d chat_id="\${TG_CHAT}" \
                       -d text="SUCCEEDED: ${env.JOB_NAME} %23${env.BUILD_NUMBER}%0A${env.BUILD_URL}"
-                """
+                """}
         }
     }
 }
